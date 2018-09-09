@@ -35,34 +35,25 @@ typedef struct		s_sha_256
 
 /*
 ** @param name - name of command.
-** @param hash_f - hash function (input data, flags).
-** @param parse_f - function responsible for parsing arguments (ac, av, flags).
-** @param output_f - function that is responsible for output (input data, output data, flags).
-** @param flags - pointer to a structure with flags, every command has different flags.
+** @param hash - hash function (input data, flags).
+** @param f - function that represents certain algorithm that needs to be executed.
 */
 
 typedef struct	s_command
 {
 	char		*name;
-	void		*flags;
-	char		*(*hash_f)(char *, void *);
-	void		(*parse_f)(int, char **, void *);
-	void		(*output_f)(char *, char *, void *);
+	void		(*f)(struct s_command *, int, char **);
 }				t_command;
 
 void			ft_error(char *s);
+void			*init_flags(size_t size);
 
-char			*md5(char *input_data, void *flags);
-void			md5_parse(int ac, char *av[], void *flags);
-void			md5_output(char *input_data, char *output_data, void *flags);
-
-char			*sha256(char *input_data, void *flags);
-void			sha256_parse(int ac, char *av[], void *flags);
-void			sha256_output(char *input_data, char *output_data, void *flags);
+void			md5(t_command *command, int ac, char *av[]);
+void			sha256(t_command *command, int ac, char *av[]);
 
 static t_command	g_commands[COUNT_COMMANDS] = {
-	{"md5", NULL, md5, md5_parse, md5_output},
-	{"sha256", NULL, sha256, sha256_parse, sha256_output}
+	{"md5", md5},
+	{"sha256", sha256}
 };
 
 #endif

@@ -1,16 +1,19 @@
 #include <ft_ssl.h>
 
-char			*sha256(char *input_data, void *flags)
+// static void			sha256_parse(int ac, char *av[], void *flags)
+// {
+
+// }
+
+// static void			sha256_output(char *input_data, char *output_data, void *flags)
+// {
+
+// }
+
+void			sha256(t_command *command, int ac, char *av[])
 {
-	return (NULL);
-}
+	t_sha_256	*flags;
 
-void			sha256_parse(int ac, char *av[], void *flags)
-{
-
-}
-
-void			sha256_output(char *input_data, char *output_data, void *flags)
-{
-
+	flags = (t_sha_256 *)init_flags(sizeof(t_sha_256 *));
+	ft_printf("%d\n", flags->q);
 }

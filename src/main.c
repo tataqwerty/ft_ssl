@@ -26,6 +26,12 @@ static t_command	*get_command(char *str)
 	return (NULL);
 }
 
+static void		show_commands(char *str)
+{
+	ft_printf("error message\n");
+	exit(0);
+}
+
 int				main(int ac, char *av[])
 {
 	t_command	*command;
@@ -35,7 +41,8 @@ int				main(int ac, char *av[])
 	else
 	{
 		command = get_command(av[1]);
-		(!command) ? ft_error("ERROR") : 0;
+		(!command) ? show_commands(av[1]) : 0;
+		command->f(command, ac, av);
 	}
 	return (0);
 }
