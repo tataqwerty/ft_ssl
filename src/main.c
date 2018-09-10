@@ -28,7 +28,8 @@ static t_command	*get_command(char *str)
 
 static void		show_commands(char *str)
 {
-	ft_printf("error message\n");
+	ft_printf("ft_ssl:Error: '%s' is an invalid command.\n", str);
+	ft_printf("output all commands\n");
 	exit(0);
 }
 
@@ -42,7 +43,7 @@ int				main(int ac, char *av[])
 	{
 		command = get_command(av[1]);
 		(!command) ? show_commands(av[1]) : 0;
-		command->f(command, ac, av);
+		command->f(ac, av);
 	}
 	return (0);
 }

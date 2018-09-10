@@ -20,36 +20,30 @@
 typedef struct		s_md5
 {
 	unsigned char	q : 1;
-	unsigned char	p : 1;
 	unsigned char	r : 1;
-	unsigned char	s : 1;
 }					t_md5;
 
 typedef struct		s_sha_256
 {
 	unsigned char	q : 1;
-	unsigned char	p : 1;
 	unsigned char	r : 1;
-	unsigned char	s : 1;
 }					t_sha_256;
 
 /*
 ** @param name - name of command.
-** @param hash - hash function (input data, flags).
 ** @param f - function that represents certain algorithm that needs to be executed.
 */
 
 typedef struct	s_command
 {
 	char		*name;
-	void		(*f)(struct s_command *, int, char **);
+	void		(*f)(int, char **);
 }				t_command;
 
 void			ft_error(char *s);
-void			*init_flags(size_t size);
 
-void			md5(t_command *command, int ac, char *av[]);
-void			sha256(t_command *command, int ac, char *av[]);
+void			md5(int ac, char *av[]);
+void			sha256(int ac, char *av[]);
 
 static t_command	g_commands[COUNT_COMMANDS] = {
 	{"md5", md5},

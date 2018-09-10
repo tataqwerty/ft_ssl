@@ -10,10 +10,10 @@
 
 // }
 
-void			sha256(t_command *command, int ac, char *av[])
+void			sha256(int ac, char *av[])
 {
 	t_sha_256	*flags;
 
-	flags = (t_sha_256 *)init_flags(sizeof(t_sha_256 *));
+	flags = (t_sha_256 *)ft_memalloc(sizeof(t_sha_256 *));
 	ft_printf("%d\n", flags->q);
 }
