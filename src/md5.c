@@ -88,7 +88,7 @@ char	dispatcher_flags(char **cur, char *next, int *i, t_md5 *flags)
 }
 
 /*
-** This function parses flags in one argument.
+** This function parses flags in a single argument.
 **
 ** return values :
 ** 1 - something have been outputed.
@@ -116,6 +116,10 @@ static char	parse_flags_arg(char *cur, char *next, int *i, t_md5 *flags)
 	}
 	return (flag_output);
 }
+
+/*
+** @param tmp - represents result of execution of parsing flags in a single argument.
+*/
 
 static char	parse_flags(char *av[], int ac, int *i, t_md5 *flags)
 {
@@ -167,6 +171,12 @@ static char	parse_files(char *av[], int ac, int *i, t_md5 *flags)
 	return (flag_output);
 }
 
+/*
+** @param flags - pointer to a structure in which I save all the flags that appears.
+** @param flag_output - represents whether something was outputed or not, during parsing flags or parsing files (just because I need to loop to get input data from user and hash it).
+** @param i - counter for av (arguments);
+*/
+
 void		md5(int ac, char *av[])
 {
 	t_md5	*flags;
@@ -179,6 +189,6 @@ void		md5(int ac, char *av[])
 	flag_output = 0;
 	flag_output |= parse_flags(av, ac, &i, flags);
 	flag_output |= parse_files(av, ac, &i, flags);
-	if (!flag_output)
+	if (flag_output == 0)
 		hash_handler(read_data(0), flags);
 }
