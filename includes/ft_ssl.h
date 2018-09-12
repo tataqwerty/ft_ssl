@@ -17,16 +17,23 @@
 
 # define COUNT_COMMANDS	2
 
+
+
+# define IS_NOT_A_FLAG -1
+
+
 typedef struct		s_md5
 {
 	unsigned char	q : 1;
 	unsigned char	r : 1;
+	unsigned char	p : 1;
 }					t_md5;
 
 typedef struct		s_sha_256
 {
 	unsigned char	q : 1;
 	unsigned char	r : 1;
+	unsigned char	p : 1;
 }					t_sha_256;
 
 /*
