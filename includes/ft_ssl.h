@@ -52,7 +52,7 @@ void			usage(void);
 char			*read_data(int fd);
 
 
-void			hash_handler(char *input_value, t_md5 *flags, char *(*hash)(char *), void (*output)(char *, char *, void *));
+void			hash_handler(char *input_value, void *flags, char *(*hash)(char *), void (*output)(char *, char *, void *));
 
 /* MD5 */
 char			md5_parse_flags(char *av[], int ac, int *i, t_md5 *flags);
@@ -60,14 +60,18 @@ char			md5_parse_files(char *av[], int ac, int *i, t_md5 *flags);
 void			md5_output(char *input_value, char *hashed_value, void *flags);
 char			*md5_hash(char *input);
 
-
+/* SHA256 */
+char			sha_256_parse_flags(char *av[], int ac, int *i, t_sha_256 *flags);
+char			sha_256_parse_files(char *av[], int ac, int *i, t_sha_256 *flags);
+void			sha_256_output(char *input_value, char *hashed_value, void *flags);
+char			*sha_256_hash(char *input);
 
 void			md5(int ac, char *av[]);
-void			sha256(int ac, char *av[]);
+void			sha_256(int ac, char *av[]);
 
 static t_command	g_commands[COUNT_COMMANDS] = {
 	{"md5", md5},
-	{"sha256", sha256}
+	{"sha256", sha_256}
 };
 
 #endif

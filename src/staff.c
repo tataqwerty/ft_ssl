@@ -27,7 +27,7 @@ char	*read_data(int fd)
 	return (data);
 }
 
-void	hash_handler(char *input_value, t_md5 *flags, char *(*hash)(char *), void (*output)(char *, char *, void *))
+void	hash_handler(char *input_value, void *flags, char *(*hash)(char *), void (*output)(char *, char *, void *))
 {
 	char	*hashed_value;
 
