@@ -49,6 +49,17 @@ typedef struct	s_command
 
 void			ft_error(char *s);
 void			usage(void);
+char			*read_data(int fd);
+
+
+void			hash_handler(char *input_value, t_md5 *flags, char *(*hash)(char *), void (*output)(char *, char *, void *));
+
+/* MD5 */
+char			md5_parse_flags(char *av[], int ac, int *i, t_md5 *flags);
+char			md5_parse_files(char *av[], int ac, int *i, t_md5 *flags);
+void			md5_output(char *input_value, char *hashed_value, void *flags);
+char			*md5_hash(char *input);
+
 
 
 void			md5(int ac, char *av[]);
