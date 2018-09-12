@@ -48,6 +48,8 @@ typedef struct	s_command
 }				t_command;
 
 void			ft_error(char *s);
+void			usage(void);
+
 
 void			md5(int ac, char *av[]);
 void			sha256(int ac, char *av[]);

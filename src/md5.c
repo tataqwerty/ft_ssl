@@ -22,7 +22,7 @@ static void	hash_handler(char *input_value, t_md5 *flags)
 	ft_printf("===> %s", input_value);
 	// hashed_value = hash(input_value);
 	// output(input_value, hashed_value, flags);
-	// ft_memdel(&input_value);
+	ft_strdel(&input_value);
 	// ft_memdel(&hashed_value);
 }
 
@@ -37,11 +37,12 @@ static char	s_handler(char **cur, char *next, int *i, t_md5 *flags)
 	else if (next)
 	{
 		(*i)++;
-		hash_handler(next, flags);
+		hash_handler(ft_strdup(next), flags);
 	}
 	else
 	{
-		ft_error("Error invalid using of -s flag");
+		ft_printf("md5: option requires an argument -- s\n");
+		usage();
 	}
 	return (1);
 }
@@ -88,7 +89,8 @@ char	dispatcher_flags(char **cur, char *next, int *i, t_md5 *flags)
 	}
 	else
 	{
-		ft_error("Error 0");
+		ft_printf("md5: illegal option -- %c\n", **cur);
+		usage();
 	}
 	return (0);
 }
@@ -152,8 +154,16 @@ static void	file_handler(char *file_name, t_md5 *flags)
 	int		fd;
 
 	fd = open(file_name, O_RDONLY);
-	if (fd < 0 || read(fd, NULL, 0) < 0)
-		ft_error("ERROR invalid file");
+	if (fd < 0)
+	{
+		ft_printf("md5: %s: No such file or directory\n", file_name);
+		exit(0);
+	}
+	else if (read(fd, NULL, 0) < 0)
+	{
+		ft_printf("md5: %s: Is a directory\n", file_name);
+		exit(0);
+	}
 	hash_handler(read_data(fd), flags);
 	close(fd);
 }
@@ -183,7 +193,7 @@ void		md5(int ac, char *av[])
 	int		i;
 
 	flags = ft_memalloc(sizeof(t_md5 *));
-	(!flags) ? ft_error("ERROR MALLOC") : 0;
+	(!flags) ? ft_error("Error: something wrong with malloc") : 0;
 	i = 2;
 	flag_output = 0;
 	flag_output |= parse_flags(av, ac, &i, flags);
@@ -192,4 +202,5 @@ void		md5(int ac, char *av[])
 	{
 		hash_handler(read_data(0), flags);
 	}
+	system("leaks ft_ssl");
 }
