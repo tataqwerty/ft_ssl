@@ -29,7 +29,7 @@ static void	hash_handler(char *input_value, t_md5 *flags)
 static char	s_handler(char **cur, char *next, int *i, t_md5 *flags)
 {
 	(*cur)++;
-	if (**cur)	//	if something comes after 's'.
+	if (**cur)
 	{
 		hash_handler(ft_strdup(*cur), flags);
 		*cur += ft_strlen(*cur);
@@ -72,21 +72,13 @@ static char	p_handler(t_md5 *flags)
 char	dispatcher_flags(char **cur, char *next, int *i, t_md5 *flags)
 {
 	if (**cur == 'q')
-	{
 		flags->q = 1;
-	}
 	else if (**cur == 'r')
-	{
 		flags->r = 1;
-	}
 	else if (**cur == 'p')
-	{
 		return (p_handler(flags));
-	}
 	else if (**cur == 's')
-	{
 		return (s_handler(cur, next, i, flags));
-	}
 	else
 	{
 		ft_printf("md5: illegal option -- %c\n", **cur);
@@ -113,11 +105,8 @@ static char	parse_flags_arg(char *cur, char *next, int *i, t_md5 *flags)
 		(*i)++;
 		return (IS_NOT_A_FLAG);
 	}
-	else if (*cur != '-' || !*(++cur))	//	if string doesn't begin with '-' or string is just a '-' => is not a flag.
+	else if (*cur != '-' || !*(++cur))
 		return (IS_NOT_A_FLAG);
-
-	//	Here we already skip first character which was '-'.
-
 	flag_output = 0;
 	while (*cur)
 	{
@@ -127,10 +116,6 @@ static char	parse_flags_arg(char *cur, char *next, int *i, t_md5 *flags)
 	}
 	return (flag_output);
 }
-
-/*
-** return value : if something have been outputed -> 1, else -> 0.
-*/
 
 static char	parse_flags(char *av[], int ac, int *i, t_md5 *flags)
 {
@@ -168,10 +153,6 @@ static void	file_handler(char *file_name, t_md5 *flags)
 	close(fd);
 }
 
-/*
-** return value : if something have been outputed - 1, else - 0.
-*/
-
 static char	parse_files(char *av[], int ac, int *i, t_md5 *flags)
 {
 	char	flag_output;
@@ -199,8 +180,5 @@ void		md5(int ac, char *av[])
 	flag_output |= parse_flags(av, ac, &i, flags);
 	flag_output |= parse_files(av, ac, &i, flags);
 	if (!flag_output)
-	{
 		hash_handler(read_data(0), flags);
-	}
-	system("leaks ft_ssl");
 }
