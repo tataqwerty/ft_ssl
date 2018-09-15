@@ -1,42 +1,49 @@
 #include <ft_ssl.h>
 
-char	*get_input_value()
-{
-
-}
-
-char	parse_arg(int ac, char *av[], int *i, t_md5 *flags)
+char			parse_flags(int ac, char *av[], int *i, t_md5 *flags)
 {
 	char	*s;
-	char	*input_value;
-	char	*hashed_value;
 
 	s = av[*i];
 	if (ft_strequ(s, "--") || *s != '-')
-		return (0);
+		return (0);	// Заканчиваем парсинг флагов.
 	s++;
-	// while (1)
-	// {
-	// 	if ((*i + 1) < ac)
-	// 		input_value = get_input_value(&s, av[*i + 1], flags);
-	// 	else
-	// 		input_value = get_input_value(&s, NULL, flags);
-	// 	if (input_value)
-	// 	{
-	// 		hashed_value = hash(input_value);
-	// 		output(input_value, hashed_value, flags);
-	// 		ft_memdel(&input_value);
-	// 		ft_memdel(&hashed_value);
-	// 	}
-	// 	else
-	// 		break ;
-	// }
-	while ((input_value = get_input_value(&s, ac, av, i, flags)))
+	while (*s)
 	{
-		hashed_value = hash(input_value);
-		output(input_value, hashed_value, flags);
-		ft_memdel(&input_value);
-		ft_memdel(&hashed_value);
+		if (*s == 'q')
+			flags->q = 1;
+		else if (*s == 'r')
+			flags->r = 1;
+		else if (*s == 'p')
+		{
+			input_value = read_data(0);
+			hashed_value = hash(input_value);
+			output(input_value, hashed_value);
+			ft_memdel(&input_value);
+			ft_memdel(&hashed_value);
+		}
+		else if (*s == 's')
+		{
+			if (ft_strlen(s) > 1)	//	After character 's' comes another characters.
+			{
+				input_value = s + 1;
+				hashed_value = hash(input_value);
+				output(input_value, hashed_value);
+				ft_memdel(&hashed_value);
+			}
+			else if ((*i + 1) < ac)
+			{
+				(*i)++;
+				input_value = av[*i];
+				hashed_value = hash(input_value);
+				output(input_value, hashed_value);
+				ft_memdel(&hashed_value);
+			}
+			else
+				ft_error("Error");
+			return (1);
+		}
+		s++;
 	}
 	return (1);
 }
@@ -51,7 +58,7 @@ void			md5(int ac, char *av[])
 	i = 2;
 	while (i < ac)
 	{
-		if (!parse_arg(ac, av, &i, flags))
+		if (!parse_flags(ac, av, &i, flags))
 			break ;
 		i++;
 	}
