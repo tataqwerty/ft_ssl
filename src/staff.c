@@ -14,15 +14,14 @@ void	usage(void)
 
 char	*read_data(int fd)
 {
-	char	*line;
+	char	buf[BUFF_SIZE];
 	char	*data;
 
-	line = NULL;
+	ft_bzero(buf, BUFF_SIZE);
 	data = ft_strdup("");
-	while (get_next_line(fd, &line) > 0)
+	while (read(fd, buf, BUFF_SIZE) > 0)
 	{
-		line = ft_strjoinfree(line, "\n", 1);
-		data = ft_strjoinfree(data, line, 3);
+		data = ft_strjoinfree(data, buf, 1);
 	}
 	return (data);
 }
