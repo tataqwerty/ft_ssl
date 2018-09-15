@@ -33,6 +33,20 @@ static void		show_commands(char *str)
 	exit(0);
 }
 
+void	ft_ssl_template(t_command *command, int ac, char *av[])
+{
+	void *flags;
+
+
+	ft_printf("%d\n", flags->q);
+
+	// while (command->parse())
+	// {
+	// 	command->hash();
+	// 	command->output();
+	// }
+}
+
 int				main(int ac, char *av[])
 {
 	t_command	*command;
@@ -43,7 +57,7 @@ int				main(int ac, char *av[])
 	{
 		command = get_command(av[1]);
 		(!command) ? show_commands(av[1]) : 0;
-		command->f(ac, av);
+		ft_ssl_template(command, ac, av);
 	}
 	return (0);
 }

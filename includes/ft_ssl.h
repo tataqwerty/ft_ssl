@@ -17,37 +17,49 @@
 
 # define COUNT_COMMANDS	2
 
-typedef struct		s_md5
-{
-	unsigned char	q : 1;
-	unsigned char	r : 1;
-}					t_md5;
+# define IS_NOT_A_FLAG -1
 
-typedef struct		s_sha_256
+typedef struct		s_md5_sha
 {
 	unsigned char	q : 1;
 	unsigned char	r : 1;
-}					t_sha_256;
+	unsigned char	p : 1;
+	unsigned char	s : 1;
+	unsigned char	file : 1;
+}					t_md5_sha;
+
+
+
+// typedef struct
+// {
+	
+// }	t_flags;
 
 /*
 ** @param name - name of command.
-** @param f - function that represents certain algorithm that needs to be executed.
+** @param hash - function that represents hash algorithm.
+** @param parse - parsing function.
+** @param output - function responsible for the output formatting.
 */
 
 typedef struct	s_command
 {
 	char		*name;
-	void		(*f)(int, char **);
+	char		*(*hash)(char *);
+	char		(*parse)();
+	void		(*output)();
 }				t_command;
 
 void			ft_error(char *s);
+void			usage(void);
 
-void			md5(int ac, char *av[]);
-void			sha256(int ac, char *av[]);
+char	*md5_hash(char *input);
+char	md5_sha_parser(int ac, char *av[]);
+void	md5_sha_output(void);
 
 static t_command	g_commands[COUNT_COMMANDS] = {
-	{"md5", md5},
-	{"sha256", sha256}
+	{"md5", md5_hash, md5_sha_parser, md5_sha_output}
+	// {"sha256", sha_256}
 };
 
 #endif

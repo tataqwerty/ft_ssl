@@ -6,12 +6,8 @@ void	ft_error(char *s)
 	exit(0);
 }
 
-void	*init_flags(size_t size)
+void	usage(void)
 {
-	void	*flags;
-
-	flags = (void *)malloc(sizeof(void) * size);
-	(!flags) ? ft_error("Error") : 0;
-	ft_bzero(flags, sizeof(flags));
-	return (flags);
+	ft_printf("usage: md5 [-pqrtx] [-s string] [files ...]\n");
+	exit(0);
 }
