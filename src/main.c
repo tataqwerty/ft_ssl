@@ -35,16 +35,14 @@ static void		show_commands(char *str)
 
 void	ft_ssl_template(t_command *command, int ac, char *av[])
 {
-	void *flags;
+	int		i;
+	int		j;
 
-
-	ft_printf("%d\n", flags->q);
-
-	// while (command->parse())
-	// {
-	// 	command->hash();
-	// 	command->output();
-	// }
+	i = 2;
+	j = 0;
+	command->data = command->init_data();
+	while (command->parse(av, &i, &j, command))	//	RETURNS 1 OR 0
+		command->output(command);
 }
 
 int				main(int ac, char *av[])
