@@ -17,61 +17,49 @@
 
 # define COUNT_COMMANDS	2
 
-
-
 # define IS_NOT_A_FLAG -1
 
-
-typedef struct		s_md5
+typedef struct		s_md5_sha
 {
 	unsigned char	q : 1;
 	unsigned char	r : 1;
 	unsigned char	p : 1;
-}					t_md5;
+	unsigned char	s : 1;
+	unsigned char	file : 1;
+}					t_md5_sha;
 
-typedef struct		s_sha_256
-{
-	unsigned char	q : 1;
-	unsigned char	r : 1;
-	unsigned char	p : 1;
-}					t_sha_256;
+
+
+// typedef struct
+// {
+	
+// }	t_flags;
 
 /*
 ** @param name - name of command.
-** @param f - function that represents certain algorithm that needs to be executed.
+** @param hash - function that represents hash algorithm.
+** @param parse - parsing function.
+** @param output - function responsible for the output formatting.
 */
 
 typedef struct	s_command
 {
 	char		*name;
-	void		(*f)(int, char **);
+	char		*(*hash)(char *);
+	char		(*parse)();
+	void		(*output)();
 }				t_command;
 
 void			ft_error(char *s);
 void			usage(void);
-char			*read_data(int fd);
 
-
-void			hash_handler(char *input_value, void *flags, char *(*hash)(char *), void (*output)(char *, char *, void *));
-
-/* MD5 */
-char			md5_parse_flags(char *av[], int ac, int *i, t_md5 *flags);
-char			md5_parse_files(char *av[], int ac, int *i, t_md5 *flags);
-void			md5_output(char *input_value, char *hashed_value, void *flags);
-char			*md5_hash(char *input);
-
-/* SHA256 */
-char			sha_256_parse_flags(char *av[], int ac, int *i, t_sha_256 *flags);
-char			sha_256_parse_files(char *av[], int ac, int *i, t_sha_256 *flags);
-void			sha_256_output(char *input_value, char *hashed_value, void *flags);
-char			*sha_256_hash(char *input);
-
-void			md5(int ac, char *av[]);
-void			sha_256(int ac, char *av[]);
+char	*md5_hash(char *input);
+char	md5_sha_parser(int ac, char *av[]);
+void	md5_sha_output(void);
 
 static t_command	g_commands[COUNT_COMMANDS] = {
-	{"md5", md5},
-	{"sha256", sha_256}
+	{"md5", md5_hash, md5_sha_parser, md5_sha_output}
+	// {"sha256", sha_256}
 };
 
 #endif
