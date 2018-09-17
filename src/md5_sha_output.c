@@ -45,7 +45,7 @@ void		md5_sha_output(t_command *command)
 	cmd_name = ft_strtoupper(command->name);
 	(!cmd_name) ? ft_error("Error with malloc") : 0;
 	data = (t_md5_sha_data *)command->data;
-	data->hashed = command->hash(data->input);
+	data->hashed = command->hash(data->input, data->size);
 	output_router(data, cmd_name);
 	clean_data(data);
 	ft_strdel(&cmd_name);

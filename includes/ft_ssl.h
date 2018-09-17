@@ -48,7 +48,7 @@ typedef struct		s_md5_sha_data
 typedef struct	s_command
 {
 	char		*name;
-	char		*(*hash)(char *);
+	char		*(*hash)(char *, size_t);
 	char		(*parse)(char **, int *, int *, struct s_command *);
 	void		(*output)(struct s_command *);
 	void		*(*init_data)(void);
@@ -64,8 +64,8 @@ char			*read_data(int fd, size_t *size);
 /*
 ** hash functions.
 */
-char	*md5_hash(char *input);
-char	*sha256_hash(char *input);
+char	*md5_hash(char *input, size_t size);
+// char	*sha256_hash(char *input, size_t size);
 
 // MD5 SHA
 void	md5_sha_flag_router(char *av[], int *i, int *j, t_command *command);
@@ -74,8 +74,8 @@ void	md5_sha_output(t_command *command);
 void	*md5_sha_init_data(void);
 
 static t_command	g_commands[COUNT_COMMANDS] = {
-	{"md5", md5_hash, md5_sha_parser, md5_sha_output, md5_sha_init_data},
-	{"sha256", sha256_hash, md5_sha_parser, md5_sha_output, md5_sha_init_data}
+	{"md5", md5_hash, md5_sha_parser, md5_sha_output, md5_sha_init_data}
+	// {"sha256", sha256_hash, md5_sha_parser, md5_sha_output, md5_sha_init_data}
 };
 
 #endif
