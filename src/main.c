@@ -33,6 +33,14 @@ static void		show_commands(char *str)
 	exit(0);
 }
 
+/*
+** It is a function that parses, hashes, and outputs, for each kind of command.
+** MD5 and SHA have different hash functions, but have the same parser and output functions.
+**
+** @param i - represents counter for arguments (av).
+** @param j - represents counter for a single argument.
+*/
+
 void	ft_ssl_template(t_command *command, int ac, char *av[])
 {
 	int		i;
@@ -42,7 +50,16 @@ void	ft_ssl_template(t_command *command, int ac, char *av[])
 	j = 0;
 	command->data = command->init_data();
 	while (command->parse(av, &i, &j, command))	//	RETURNS 1 OR 0
+	{
+		/* I have to pass there command, because I can not pass there data
+		** (command->data->hashed = command->hash(command->data->input)), 
+		** cause command->data is of type void,
+		** so I need to cast it to a different type.
+		**
+		** So, the solution is to call hash function in output function.
+		*/
 		command->output(command);
+	}
 }
 
 int				main(int ac, char *av[])

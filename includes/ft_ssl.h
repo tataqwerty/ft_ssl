@@ -15,9 +15,13 @@
 
 # include <libft.h>
 
-# define COUNT_COMMANDS	1
-
+# define COUNT_COMMANDS	2
 # define IS_NOT_A_FLAG -1
+
+/*
+** @param name - name of a file, or a string (-s 'string'), just for output.
+** @param size - size of input.
+*/
 
 typedef struct		s_md5_sha_data
 {
@@ -28,7 +32,6 @@ typedef struct		s_md5_sha_data
 		unsigned char	r : 1;
 		unsigned char	s : 1;
 		unsigned char	file : 1;
-		unsigned char	p_used : 1;	//	for output.
 	}				flags;
 	char			*name;
 	char			*input;
@@ -37,10 +40,9 @@ typedef struct		s_md5_sha_data
 }					t_md5_sha_data;
 
 /*
-** @param name - name of command.
-** @param hash - function that represents hash algorithm.
-** @param parse - parsing function.
-** @param output - function responsible for the output formatting.
+** @param init_data - function that initializes data.
+** (each command have different init function,
+** because each command needs different data types).
 */
 
 typedef struct	s_command
@@ -53,17 +55,27 @@ typedef struct	s_command
 	void		*data;
 }				t_command;
 
+/*
+** staff functions (functions that I use everywhere).
+*/
 void			ft_error(char *s);
 char			*read_data(int fd, size_t *size);
 
-// MD5 SHA
+/*
+** hash functions.
+*/
 char	*md5_hash(char *input);
+char	*sha256_hash(char *input);
+
+// MD5 SHA
+void	md5_sha_flag_router(char *av[], int *i, int *j, t_command *command);
 char	md5_sha_parser(char *av[], int *i, int *j, t_command *command);
 void	md5_sha_output(t_command *command);
 void	*md5_sha_init_data(void);
 
 static t_command	g_commands[COUNT_COMMANDS] = {
-	{"md5", md5_hash, md5_sha_parser, md5_sha_output, md5_sha_init_data}
+	{"md5", md5_hash, md5_sha_parser, md5_sha_output, md5_sha_init_data},
+	{"sha256", sha256_hash, md5_sha_parser, md5_sha_output, md5_sha_init_data}
 };
 
 #endif

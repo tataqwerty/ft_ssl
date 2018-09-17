@@ -6,7 +6,7 @@
 /*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 16:40:11 by tkiselev          #+#    #+#             */
-/*   Updated: 2018/08/27 16:48:41 by tkiselev         ###   ########.fr       */
+/*   Updated: 2018/09/17 10:58:57 by tkiselev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,7 @@ void				ft_list_pushback(t_list **head, char *line);
 char				ft_is_uint(char *s);
 char				ft_is_int(char *s);
 void				print_memory(const void *addr, size_t size);
+char				*ft_strtoupper(const char *src);
 
 int					ft_printf(const char *format, ...);
 void				ft_spec_flags(char **format, t_struct *s);
