@@ -1,27 +1,5 @@
 #include <ft_ssl.h>
 
-// #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
-// #define BYTE_TO_BINARY(byte)  \
-//   (byte & 0x80 ? '1' : '0'), \
-//   (byte & 0x40 ? '1' : '0'), \
-//   (byte & 0x20 ? '1' : '0'), \
-//   (byte & 0x10 ? '1' : '0'), \
-//   (byte & 0x08 ? '1' : '0'), \
-//   (byte & 0x04 ? '1' : '0'), \
-//   (byte & 0x02 ? '1' : '0'), \
-//   (byte & 0x01 ? '1' : '0')
-
-// void	print_binary(char *hashed, size_t size)
-// {
-// 	size_t i = 0;
-
-// 	while (i < size)
-// 	{
-// 		printf(BYTE_TO_BINARY_PATTERN"\n", BYTE_TO_BINARY(hashed[i]));
-// 		i++;
-// 	}
-// }
-
 void	add_one_byte(unsigned char **input, size_t *size, unsigned char byte)
 {
 	unsigned char	*new;
@@ -96,7 +74,6 @@ void	copy_16_words(unsigned int M[], unsigned char *hashed)
 	}
 }
 
-
 void	operation_switcher(unsigned int abcd[], unsigned int *F, unsigned int *g, unsigned int i)
 {
 	if (i <= 15)
@@ -155,6 +132,32 @@ void	block_handler(unsigned char *hashed, unsigned int buffers[])
 	buffers[3] += abcd[3];
 }
 
+void	create_hash(unsigned char **hash, unsigned int buffers[])
+{
+	unsigned char	*base;
+	unsigned char	*tmp;
+	unsigned char	i;
+	unsigned char	j;
+	unsigned char	k;
+
+	base = "0123456789abcdef";
+	(!(*hash = ft_memalloc(33))) ? ft_error("Error with malloc") : 0;
+	i = 0;
+	j = 0;
+	while (i < 4)
+	{
+		tmp = (unsigned char *)&buffers[i];
+		k = 0;
+		while (k < 4)
+		{
+			(*hash)[j++] = base[tmp[k] / 16];
+			(*hash)[j++] = base[tmp[k] % 16];
+			k++;
+		}
+		i++;
+	}
+}
+
 unsigned char		*md5_hash(char *input, size_t size)
 {
 	unsigned char	*hashed;
@@ -176,19 +179,6 @@ unsigned char		*md5_hash(char *input, size_t size)
 	while (i < blocks_len)
 		block_handler(hashed + (i++ * 64), buffers);
 	ft_strdel((char **)&hashed);
-	(!(hashed = ft_memalloc(16))) ? ft_error("Error with malloc") : 0;
-	copy_4_bytes(hashed, (unsigned char *)&buffers[0]);
-	copy_4_bytes(hashed + 4, (unsigned char *)&buffers[1]);
-	copy_4_bytes(hashed + 8, (unsigned char *)&buffers[2]);
-	copy_4_bytes(hashed + 12, (unsigned char *)&buffers[3]);
-	
-	// i = 0;
-	// while (i < 16)
-	// {
-	// 	ft_printf("%x", hashed[i]);
-	// 	i++;
-	// }
-	// ft_printf("\n");
-	
+	create_hash(&hashed, buffers);
 	return (hashed);
 }
