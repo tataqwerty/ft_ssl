@@ -75,53 +75,129 @@ void	add_input_size(char **input, size_t *size, size_t input_size)
 	*input = new;
 }
 
-int		func_f(int x, int y, int z)
-{
-	int res;
+// static void	init_buffers(t_md5_sha_buffers	*buffers)
+// {
+// 	buffers->a = 0x67452301;
+// 	buffers->b = 0xefcdab89;
+// 	buffers->c = 0x98badcfe;
+// 	buffers->d = 0x10325476;
+// }
 
-	return (res);
+// void	append_buffer(char *hashed, unsigned char *buffer)
+// {
+// 	hashed[0] = buffer[0];
+// 	hashed[1] = buffer[1];
+// 	hashed[2] = buffer[2];
+// 	hashed[3] = buffer[3];
+// }
+
+void	copy_4_bytes(unsigned char *dest, unsigned char *src)
+{
+	dest[0] = src[0];
+	dest[1] = src[1];
+	dest[2] = src[2];
+	dest[3] = src[3];
 }
 
-int		func_g(int x, int y, int z)
+void	copy_16_words(unsigned int M[], char *hashed)
 {
-	int res;
+	unsigned char	i;
 
-	return (res);
+	i = 0;
+	while (i < 16)
+	{
+		copy_4_bytes(&M[i], hashed);
+		i++;
+		hashed += 4;
+	}
 }
 
-int		func_h(int x, int y, int z)
+void	operation_switcher(t_md5_sha_buffers &buffers, unsigned int *F, unsigned int *g, unsigned char i)
 {
-	int res;
-
-	return (res);
+	if (i >= 0 && i <= 15)
+	{
+		// *F = (B and C) or ((not B) and D);
+		*F = (buffers->b & buffers->c) || (!buffers->c & buffers->d);
+		*g = i;
+	}
+	else if (i >= 16 && i <= 31)
+	{
+		// *F = (D and B) or ((not D) and C);
+		*g = (5×i + 1) mod 16;
+	}
+	else if (i >= 32 && i <= 47)
+	{
+		*F = B xor C xor D;
+		*g = (3×i + 5) mod 16;
+	}
+	else if (i >= 48 && i <= 63)
+	{
+		*F = C xor (B or (not D));
+		*g = (7×i) mod 16;
+	}
 }
 
-int		func_i(int x, int y, int z)
+void	block_handler(char *hashed, t_md5_sha_buffers *buffers)
 {
-	int res;
+	t_md5_sha_buffers	block_buffers;
+	unsigned int		M[16];
+	unsigned int		F;
+	unsigned int		g;
+	unsigned char		i;
 
-	return (res);
-}
+	i = 0;
+	copy_16_words(M, hashed);
+	while (i < 64)
+	{
+		block_buffers.a = buffers->a;
+		block_buffers.b = buffers->b;
+		block_buffers.c = buffers->c;
+		block_buffers.d = buffers->d;
 
-static void	init_buffers(t_md5_sha_buffers	*buffers)
-{
-	buffers->a = 1732584193;
-	buffers->b = 4023233417;
-	buffers->c = 2562383102;
-	buffers->d = 271733878;
+		operation_switcher(&block_buffers, &F, &g, i);
+
+		F = ...;
+		block_buffers.a = block_buffers.d;
+		block_buffers.d = block_buffers.c;
+		block_buffers.c = block_buffers.b;
+		block_buffers.b += leftrotate();
+		i++;
+	}
+	buffers->a += block_buffers.a;
+	buffers->b += block_buffers.b;
+	buffers->c += block_buffers.c;
+	buffers->d += block_buffers.d;
 }
 
 char	*md5_hash(char *input, size_t size)
 {
 	static t_md5_sha_buffers	buffers;
-	char	*hashed;
-	size_t	input_size;
+	char						*hashed;
+	size_t						input_size;
+	size_t						i;
+	size_t						len;
 
 	input_size = size * 8;				//	bits
 	hashed = ft_strdup(input);			//	doesn't work with binaries.
 	align_input(&hashed, &size);
 	add_input_size(&hashed, &size, input_size);
-	init_buffers(&buffers);
-
+	buffers.a = 0x67452301;
+	buffers.b = 0xefcdab89;
+	buffers.c = 0x98badcfe;
+	buffers.d = 0x10325476;
+	i = 0;
+	len = size / 64;
+	while (i < len)
+		block_handler(hashed + (i++ * 64), &buffers);
+	free(hashed);
+	(!(hashed = ft_memalloc(16))) ? ft_error("Error with malloc") : 0;
+	// append_buffer(hashed, &buffers.a);
+	// append_buffer(hashed + 4, &buffers.b);
+	// append_buffer(hashed + 8, &buffers.c);
+	// append_buffer(hashed + 12, &buffers.d);
+	copy_4_bytes(hashed, &buffers.a);
+	copy_4_bytes(hashed + 4, &buffers.b);
+	copy_4_bytes(hashed + 8, &buffers.c);
+	copy_4_bytes(hashed + 12, &buffers.d);
 	return (hashed);
 }

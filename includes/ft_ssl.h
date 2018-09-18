@@ -20,10 +20,10 @@
 
 typedef struct		s_md5_sha_buffers
 {
-	int				a;
-	int				b;
-	int				c;
-	int				d;
+	unsigned int	a;
+	unsigned int	b;
+	unsigned int	c;
+	unsigned int	d;
 }					t_md5_sha_buffers;
 
 /*
