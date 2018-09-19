@@ -22,12 +22,12 @@
 // 	}
 // }
 
-void	add_one_byte(char **input, size_t *size, unsigned char byte)
+void	add_one_byte(unsigned char **input, size_t *size, unsigned char byte)
 {
-	char	*new;
-	size_t	i;
+	unsigned char	*new;
+	size_t			i;
 
-	if (!(new = ft_strnew(*size + 1)))
+	if (!(new = (unsigned char *)ft_strnew(*size + 1)))
 		ft_error("Error with malloc");
 	i = 0;
 	while (i < *size)
@@ -41,21 +41,21 @@ void	add_one_byte(char **input, size_t *size, unsigned char byte)
 	(*size)++;
 }
 
-void	align_input(char **input, size_t *size)
+void	align_input(unsigned char **input, size_t *size)
 {
-	add_one_byte(input, size, 128);
+	add_one_byte(input, size, 128);	//	10000000
 	while ((*size % 64) != 56)
 		add_one_byte(input, size, 0);
 }
 
-void	add_input_size(char **input, size_t *size, size_t input_size)
+void	add_input_size(unsigned char **input, size_t *size, size_t input_size)
 {
-	char			*new;
+	unsigned char	*new;
 	unsigned char	*input_size_ptr;
 	size_t			i;
 	unsigned char	j;
 
-	if (!(new = ft_strnew(*size + 8)))
+	if (!(new = (unsigned char *)ft_strnew(*size + 8)))
 		ft_error("Error with malloc");
 	i = 0;
 	while (i < *size)
@@ -67,29 +67,13 @@ void	add_input_size(char **input, size_t *size, size_t input_size)
 	j = 0;
 	while (j < 8)
 	{
-		new[i + j] = input_size_ptr[7 - j];
+		new[i + j] = input_size_ptr[j];
 		j++;
 	}
 	*size += 8;
 	free(*input);
 	*input = new;
 }
-
-// static void	init_buffers(t_md5_sha_buffers	*buffers)
-// {
-// 	buffers->a = 0x67452301;
-// 	buffers->b = 0xefcdab89;
-// 	buffers->c = 0x98badcfe;
-// 	buffers->d = 0x10325476;
-// }
-
-// void	append_buffer(char *hashed, unsigned char *buffer)
-// {
-// 	hashed[0] = buffer[0];
-// 	hashed[1] = buffer[1];
-// 	hashed[2] = buffer[2];
-// 	hashed[3] = buffer[3];
-// }
 
 void	copy_4_bytes(unsigned char *dest, unsigned char *src)
 {
@@ -99,105 +83,112 @@ void	copy_4_bytes(unsigned char *dest, unsigned char *src)
 	dest[3] = src[3];
 }
 
-void	copy_16_words(unsigned int M[], char *hashed)
+void	copy_16_words(unsigned int M[], unsigned char *hashed)
 {
 	unsigned char	i;
 
 	i = 0;
 	while (i < 16)
 	{
-		copy_4_bytes(&M[i], hashed);
+		copy_4_bytes((unsigned char *)&M[i], hashed);
 		i++;
 		hashed += 4;
 	}
 }
 
-void	operation_switcher(t_md5_sha_buffers &buffers, unsigned int *F, unsigned int *g, unsigned char i)
+
+void	operation_switcher(unsigned int abcd[], unsigned int *F, unsigned int *g, unsigned int i)
 {
-	if (i >= 0 && i <= 15)
+	if (i <= 15)
 	{
-		// *F = (B and C) or ((not B) and D);
-		*F = (buffers->b & buffers->c) || (!buffers->c & buffers->d);
+		*F = (abcd[1] & abcd[2]) | (~abcd[1] & abcd[3]);
 		*g = i;
 	}
 	else if (i >= 16 && i <= 31)
 	{
-		// *F = (D and B) or ((not D) and C);
-		*g = (5×i + 1) mod 16;
+		*F = (abcd[3] & abcd[1]) | (~abcd[3] & abcd[2]);
+		*g = (5 * i + 1) % 16;
 	}
 	else if (i >= 32 && i <= 47)
 	{
-		*F = B xor C xor D;
-		*g = (3×i + 5) mod 16;
+		*F = abcd[1] ^ abcd[2] ^ abcd[3];
+		*g = (3 * i + 5) % 16;
 	}
 	else if (i >= 48 && i <= 63)
 	{
-		*F = C xor (B or (not D));
-		*g = (7×i) mod 16;
+		*F = abcd[2] ^ (abcd[1] | ~abcd[3]);
+		*g = (7 * i) % 16;
 	}
 }
 
-void	block_handler(char *hashed, t_md5_sha_buffers *buffers)
+unsigned int leftrotate(unsigned int x, unsigned int c)
 {
-	t_md5_sha_buffers	block_buffers;
-	unsigned int		M[16];
-	unsigned int		F;
-	unsigned int		g;
-	unsigned char		i;
+	return ((x << c) | (x >> (32 - c)));
+}
 
-	i = 0;
+void	block_handler(unsigned char *hashed, unsigned int buffers[])
+{
+	unsigned int	abcd[4];
+	unsigned int	M[16];
+	unsigned int	F;
+	unsigned int	g;
+	int				i;
+
 	copy_16_words(M, hashed);
-	while (i < 64)
+	abcd[0] = buffers[0];
+	abcd[1] = buffers[1];
+	abcd[2] = buffers[2];
+	abcd[3] = buffers[3];
+	i = -1;
+	while (++i < 64)
 	{
-		block_buffers.a = buffers->a;
-		block_buffers.b = buffers->b;
-		block_buffers.c = buffers->c;
-		block_buffers.d = buffers->d;
-
-		operation_switcher(&block_buffers, &F, &g, i);
-
-		F = ...;
-		block_buffers.a = block_buffers.d;
-		block_buffers.d = block_buffers.c;
-		block_buffers.c = block_buffers.b;
-		block_buffers.b += leftrotate();
-		i++;
+		operation_switcher(abcd, &F, &g, i);
+		F = F + abcd[0] + g_table_t[i] + M[g];
+		abcd[0] = abcd[3];
+		abcd[3] = abcd[2];
+		abcd[2] = abcd[1];
+		abcd[1] += leftrotate(F, g_table_s[i]);
 	}
-	buffers->a += block_buffers.a;
-	buffers->b += block_buffers.b;
-	buffers->c += block_buffers.c;
-	buffers->d += block_buffers.d;
+	buffers[0] += abcd[0];
+	buffers[1] += abcd[1];
+	buffers[2] += abcd[2];
+	buffers[3] += abcd[3];
 }
 
-char	*md5_hash(char *input, size_t size)
+unsigned char		*md5_hash(char *input, size_t size)
 {
-	static t_md5_sha_buffers	buffers;
-	char						*hashed;
-	size_t						input_size;
-	size_t						i;
-	size_t						len;
+	unsigned char	*hashed;
+	unsigned int	buffers[4];
+	size_t			input_size;
+	size_t			i;			//	counter for 512 blocks
+	size_t			blocks_len;	//	quantity of 512 blocks
 
-	input_size = size * 8;				//	bits
-	hashed = ft_strdup(input);			//	doesn't work with binaries.
+	input_size = size * 8;
+	hashed = (unsigned char *)ft_strdup(input);
 	align_input(&hashed, &size);
 	add_input_size(&hashed, &size, input_size);
-	buffers.a = 0x67452301;
-	buffers.b = 0xefcdab89;
-	buffers.c = 0x98badcfe;
-	buffers.d = 0x10325476;
+	buffers[0] = 0x67452301;
+	buffers[1] = 0xefcdab89;
+	buffers[2] = 0x98badcfe;
+	buffers[3] = 0x10325476;
 	i = 0;
-	len = size / 64;
-	while (i < len)
-		block_handler(hashed + (i++ * 64), &buffers);
-	free(hashed);
+	blocks_len = size / 64;
+	while (i < blocks_len)
+		block_handler(hashed + (i++ * 64), buffers);
+	ft_strdel((char **)&hashed);
 	(!(hashed = ft_memalloc(16))) ? ft_error("Error with malloc") : 0;
-	// append_buffer(hashed, &buffers.a);
-	// append_buffer(hashed + 4, &buffers.b);
-	// append_buffer(hashed + 8, &buffers.c);
-	// append_buffer(hashed + 12, &buffers.d);
-	copy_4_bytes(hashed, &buffers.a);
-	copy_4_bytes(hashed + 4, &buffers.b);
-	copy_4_bytes(hashed + 8, &buffers.c);
-	copy_4_bytes(hashed + 12, &buffers.d);
+	copy_4_bytes(hashed, (unsigned char *)&buffers[0]);
+	copy_4_bytes(hashed + 4, (unsigned char *)&buffers[1]);
+	copy_4_bytes(hashed + 8, (unsigned char *)&buffers[2]);
+	copy_4_bytes(hashed + 12, (unsigned char *)&buffers[3]);
+	
+	// i = 0;
+	// while (i < 16)
+	// {
+	// 	ft_printf("%x", hashed[i]);
+	// 	i++;
+	// }
+	// ft_printf("\n");
+	
 	return (hashed);
 }

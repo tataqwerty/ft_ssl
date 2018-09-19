@@ -33,7 +33,7 @@ static void	clean_data(t_md5_sha_data *data)
 	data->flags.p = 0;
 	data->name = NULL;
 	ft_strdel(&data->input);
-	ft_strdel(&data->hashed);
+	ft_strdel((char **)&data->hashed);
 	data->size = 0;
 }
 

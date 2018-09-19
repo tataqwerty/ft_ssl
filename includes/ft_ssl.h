@@ -18,14 +18,6 @@
 # define COUNT_COMMANDS	2
 # define IS_NOT_A_FLAG -1
 
-typedef struct		s_md5_sha_buffers
-{
-	unsigned int	a;
-	unsigned int	b;
-	unsigned int	c;
-	unsigned int	d;
-}					t_md5_sha_buffers;
-
 /*
 ** @param name - name of a file, or a string (-s 'string'), just for output.
 ** @param size - size of input.
@@ -43,7 +35,7 @@ typedef struct		s_md5_sha_data
 	}				flags;
 	char			*name;
 	char			*input;
-	char			*hashed;
+	unsigned char	*hashed;
 	size_t			size;
 }					t_md5_sha_data;
 
@@ -56,7 +48,7 @@ typedef struct		s_md5_sha_data
 typedef struct	s_command
 {
 	char		*name;
-	char		*(*hash)(char *, size_t);
+	unsigned char	*(*hash)(char *, size_t);
 	char		(*parse)(char **, int *, int *, struct s_command *);
 	void		(*output)(struct s_command *);
 	void		*(*init_data)(void);
@@ -72,7 +64,7 @@ char			*read_data(int fd, size_t *size);
 /*
 ** hash functions.
 */
-char	*md5_hash(char *input, size_t size);
+unsigned char	*md5_hash(char *input, size_t size);
 // char	*sha256_hash(char *input, size_t size);
 
 // MD5 SHA
