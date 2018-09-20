@@ -29,7 +29,6 @@ char	parse_flags_in_arg(char *av[], int *i, int *j, t_command *command)
 	return (0);	//	argument have been parsed, but input have not been received.
 }
 
-
 /*
 ** returns 1 if input was received, 0 if not.
 **
@@ -100,6 +99,8 @@ char	parse_files(char *av[], int *i, int *j, t_command *command)
 /*
 ** If input have been received returns 1, else 0.
 */
+
+#include <time.h>
 
 char	md5_sha_parser(char *av[], int *i, int *j, t_command *command)
 {

@@ -1,56 +1,45 @@
 #include <ft_ssl.h>
 
-static void	add_one_byte(unsigned char **input, size_t *size, unsigned char byte)
+static size_t	get_new_size(size_t size)
 {
-	unsigned char	*new;
-	size_t			i;
-
-	if (!(new = (unsigned char *)ft_strnew(*size + 1)))
-		ft_error("Error with malloc");
-	i = 0;
-	while (i < *size)
-	{
-		new[i] = (*input)[i];
-		i++;
-	}
-	new[i] |= byte;
-	free(*input);
-	*input = new;
-	(*size)++;
+	size++;						//	add 1
+	while ((size % 64) != 56)	//	size % 512 ==> 448
+		size++;
+	size += 8;
+	return (size);
 }
 
-static void	align_input(unsigned char **input, size_t *size)
+static void				add_input_size(unsigned char *input, size_t added_size)
 {
-	add_one_byte(input, size, 128);	//	10000000
-	while ((*size % 64) != 56)
-		add_one_byte(input, size, 0);
-}
+	unsigned char	*tmp;
+	unsigned char	i;
 
-static void	add_input_size(unsigned char **input, size_t *size, size_t input_size)
-{
-	unsigned char	*new;
-	unsigned char	*input_size_ptr;
-	size_t			i;
-	unsigned char	j;
-
-	if (!(new = (unsigned char *)ft_strnew(*size + 8)))
-		ft_error("Error with malloc");
+	tmp = (unsigned char *)&added_size;
 	i = 0;
-	while (i < *size)
+	while (i < 8)
 	{
-		new[i] = (*input)[i];
+		input[i] = tmp[i];
 		i++;
 	}
-	input_size_ptr = (unsigned char *)&input_size;
-	j = 0;
-	while (j < 8)
-	{
-		new[i + j] = input_size_ptr[j];
-		j++;
-	}
-	*size += 8;
-	free(*input);
-	*input = new;
+}
+
+/*
+** Add padding bits (1 + 000...)
+** Add length (last 8 bytes)
+*/
+
+static unsigned char	*get_valid_input(char *input, size_t *size)
+{
+	unsigned char	*new;
+	size_t			new_size;
+
+	new_size = get_new_size(*size);
+	(!(new = ft_memalloc(new_size))) ? ft_error("Error with malloc") : 0;
+	ft_memcpy(new, input, *size);
+	new[*size] |= 128;			// 10000000
+	add_input_size(new + new_size - 8, *size * 8);
+	*size = new_size;
+	return (new);
 }
 
 static void	create_hash(unsigned char **hash, unsigned int buffers[])
@@ -83,15 +72,10 @@ unsigned char	*md5_hash(char *input, size_t size)
 {
 	unsigned char	*hashed;
 	unsigned int	buffers[4];
-	size_t			input_size;
 	size_t			i;			//	counter for 512 blocks
 	size_t			blocks_len;	//	quantity of 512 blocks
 
-	input_size = size * 8;
-	(!(hashed = ft_memalloc(size))) ? ft_error("Error with malloc") : 0;
-	ft_memcpy(hashed, input, size);
-	align_input((unsigned char **)&hashed, &size);
-	add_input_size((unsigned char **)&hashed, &size, input_size);
+	hashed = get_valid_input(input, &size);
 	buffers[0] = 0x67452301;
 	buffers[1] = 0xefcdab89;
 	buffers[2] = 0x98badcfe;

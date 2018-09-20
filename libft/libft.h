@@ -21,7 +21,7 @@
 # include <wchar.h>
 # include <stdint.h>
 
-# define BUFF_SIZE 10000
+# define BUFF_SIZE 5000000
 
 typedef struct		s_list
 {

@@ -45,5 +45,5 @@ char	*read_data(int fd, size_t *size)
 		*size += tmp;
 		ft_bzero(buf, BUFF_SIZE);
 	}
-	return data;
+	return (data);
 }
