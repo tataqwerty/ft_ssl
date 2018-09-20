@@ -17,6 +17,8 @@
 
 # define COUNT_COMMANDS	2
 # define IS_NOT_A_FLAG -1
+# define LEFT_ROTATE(x, c) (x << c) | (x >> (32 - c));
+
 
 /*
 ** @param name - name of a file, or a string (-s 'string'), just for output.
@@ -68,6 +70,7 @@ unsigned char	*md5_hash(char *input, size_t size);
 // char	*sha256_hash(char *input, size_t size);
 
 // MD5 SHA
+void	md5_block_handler(unsigned char *hashed, unsigned int buffers[]);
 void	md5_sha_flag_router(char *av[], int *i, int *j, t_command *command);
 char	md5_sha_parser(char *av[], int *i, int *j, t_command *command);
 void	md5_sha_output(t_command *command);

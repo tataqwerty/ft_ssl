@@ -27,6 +27,7 @@ void	p_handler(char *av[], int *i, int *j, t_md5_sha_data *data)
 	{
 		p_used = 1;
 		data->input = read_data(0, &data->size);
+		ft_printf("%s", data->input);
 	}
 	else
 	{

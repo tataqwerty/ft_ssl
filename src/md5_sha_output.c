@@ -2,9 +2,7 @@
 
 static void	output_router(t_md5_sha_data *data, char *cmd_name)
 {
-	if (data->flags.q)
-		ft_printf("%s\n", data->hashed);
-	else if (data->flags.p)
+	if (data->flags.p || data->flags.q)
 		ft_printf("%s\n", data->hashed);
 	else if (data->flags.r)
 	{
@@ -18,9 +16,9 @@ static void	output_router(t_md5_sha_data *data, char *cmd_name)
 	else
 	{
 		if (data->flags.s)
-			ft_printf("%s (\"%s\") %s\n", cmd_name, data->name, data->hashed);
+			ft_printf("%s (\"%s\") = %s\n", cmd_name, data->name, data->hashed);
 		else if (data->flags.file)
-			ft_printf("%s (%s) %s\n", cmd_name, data->name, data->hashed);
+			ft_printf("%s (%s) = %s\n", cmd_name, data->name, data->hashed);
 		else
 			ft_printf("%s\n", data->hashed);
 	}
