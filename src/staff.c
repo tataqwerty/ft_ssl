@@ -47,3 +47,22 @@ char	*read_data(int fd, size_t *size)
 	}
 	return (data);
 }
+
+size_t	reverse_bytes(size_t n, unsigned char bytes)
+{
+	size_t			res;
+	unsigned char	*res_ptr;
+	unsigned char	*n_ptr;
+	unsigned char	i;
+
+	res = n;
+	n_ptr = (unsigned char *)&n;
+	res_ptr = (unsigned char *)&res;
+	i = 0;
+	while (i < bytes)
+	{
+		res_ptr[i] = n_ptr[bytes - i - 1];
+		i++;
+	}
+	return (res);
+}
