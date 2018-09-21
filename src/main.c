@@ -26,10 +26,28 @@ static t_command	*get_command(char *str)
 	return (NULL);
 }
 
+static void		output_commands(char type)
+{
+	int i;
+
+	i = 0;
+	while (i < COUNT_COMMANDS)
+	{
+		if (g_commands[i].type == type)
+			ft_printf("%s\n", g_commands[i].name);
+		i++;
+	}
+}
+
 static void		show_commands(char *str)
 {
 	ft_printf("ft_ssl:Error: '%s' is an invalid command.\n", str);
-	ft_printf("output all commands\n");
+	ft_printf("\nStandart commands:\n");
+	output_commands(STANDART_CMD);
+	ft_printf("\nMessage Digest commands:\n");
+	output_commands(MD_CMD);
+	ft_printf("\nCipher commands:\n");
+	output_commands(CIPHER_CMD);
 	exit(0);
 }
 
@@ -41,7 +59,7 @@ static void		show_commands(char *str)
 ** @param j - represents counter for a single argument.
 */
 
-void	ft_ssl_template(t_command *command, int ac, char *av[])
+static void	ft_ssl_template(t_command *command, int ac, char *av[])
 {
 	int		i;
 	int		j;
@@ -74,5 +92,6 @@ int				main(int ac, char *av[])
 		(!command) ? show_commands(av[1]) : 0;
 		ft_ssl_template(command, ac, av);
 	}
+	system("leaks ft_ssl");
 	return (0);
 }

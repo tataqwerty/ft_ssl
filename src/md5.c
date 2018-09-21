@@ -53,6 +53,11 @@ static void		md5_block_handler(unsigned char *hashed, unsigned int buffers[])
 	buffers[3] += abcd[3];
 }
 
+/*
+** @param i - counter for blocks of 512 bits.
+** @param block_len - quantity of blocks.
+*/
+
 unsigned char		*md5_hash(char *input, size_t size)
 {
 	unsigned char	*hashed;

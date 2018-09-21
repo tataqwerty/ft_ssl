@@ -43,18 +43,6 @@ static void		array_map(unsigned int arr[], int arr_n, unsigned char bytes, size_
 	}
 }
 
-// static void		sha256_swap(unsigned int abcdefgh[], unsigned int tmp[])
-// {
-// 	abcdefgh[7] = abcdefgh[6];
-// 	abcdefgh[6] = abcdefgh[5];
-// 	abcdefgh[5] = abcdefgh[4];
-// 	abcdefgh[4] = abcdefgh[3] + tmp[0];
-// 	abcdefgh[3] = abcdefgh[2];
-// 	abcdefgh[2] = abcdefgh[1];
-// 	abcdefgh[1] = abcdefgh[0];
-// 	abcdefgh[0] = tmp[0] + tmp[1];
-// }
-
 static void		sha256_block_handler(unsigned char *hashed, unsigned int buffers[])
 {
 	unsigned int	w[64];
@@ -70,46 +58,17 @@ static void		sha256_block_handler(unsigned char *hashed, unsigned int buffers[])
 	while (++i < 64)
 	{
 		operation_switcher(abcdefgh, w, i, tmp);
-		// sha256_swap(abcdefgh, tmp);
-		// abcdefgh[7] = abcdefgh[6];
-		// abcdefgh[6] = abcdefgh[5];
-		// abcdefgh[5] = abcdefgh[4];
-		// abcdefgh[4] = abcdefgh[3] + tmp[0];
-		// abcdefgh[3] = abcdefgh[2];
-		// abcdefgh[2] = abcdefgh[1];
-		// abcdefgh[1] = abcdefgh[0];
-		// abcdefgh[0] = tmp[0] + tmp[1];
-	
 		init_buffers(abcdefgh, (unsigned int[]){
-			tmp[0] + tmp[1],
-			abcdefgh[0],
-			abcdefgh[1],
-			abcdefgh[2],
-			abcdefgh[3] + tmp[0],
-			abcdefgh[4],
-			abcdefgh[5],
-			abcdefgh[6]
+			tmp[0] + tmp[1], abcdefgh[0], abcdefgh[1], abcdefgh[2],
+			abcdefgh[3] + tmp[0], abcdefgh[4], abcdefgh[5], abcdefgh[6]
 		});
 	}
 	init_buffers(buffers, (unsigned int[]){
-		buffers[0] + abcdefgh[0],
-		buffers[1] + abcdefgh[1],
-		buffers[2] + abcdefgh[2],
-		buffers[3] + abcdefgh[3],
-		buffers[4] + abcdefgh[4],
-		buffers[5] + abcdefgh[5],
-		buffers[6] + abcdefgh[6],
-		buffers[7] + abcdefgh[7]
+		buffers[0] + abcdefgh[0], buffers[1] + abcdefgh[1],
+		buffers[2] + abcdefgh[2], buffers[3] + abcdefgh[3],
+		buffers[4] + abcdefgh[4], buffers[5] + abcdefgh[5],
+		buffers[6] + abcdefgh[6], buffers[7] + abcdefgh[7]
 	});
-
-	// buffers[0] += abcdefgh[0];
-	// buffers[1] += abcdefgh[1];
-	// buffers[2] += abcdefgh[2];
-	// buffers[3] += abcdefgh[3];
-	// buffers[4] += abcdefgh[4];
-	// buffers[5] += abcdefgh[5];
-	// buffers[6] += abcdefgh[6];
-	// buffers[7] += abcdefgh[7];
 }
 
 unsigned char	*sha256_hash(char *input, size_t size)

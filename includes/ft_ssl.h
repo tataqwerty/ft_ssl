@@ -21,6 +21,10 @@
 # define RIGHT_ROTATE(x, c) ((x >> c) | (x << (32 - c)))
 # define RIGHT_SHIFT(x, c) (x >> c)
 
+# define STANDART_CMD 0
+# define MD_CMD 1
+# define CIPHER_CMD 2
+
 /*
 ** @param name - name of a file, or a string (-s 'string'), just for output.
 ** @param size - size of input.
@@ -48,15 +52,16 @@ typedef struct		s_md5_sha_data
 ** because each command needs different data types).
 */
 
-typedef struct	s_command
+typedef struct		s_command
 {
-	char		*name;
+	char			*name;
 	unsigned char	*(*hash)(char *, size_t);
-	char		(*parse)(char **, int *, int *, struct s_command *);
-	void		(*output)(struct s_command *);
-	void		*(*init_data)(void);
-	void		*data;
-}				t_command;
+	char			(*parse)(char **, int *, int *, struct s_command *);
+	void			(*output)(struct s_command *);
+	void			*(*init_data)(void);
+	void			*data;
+	char			type;
+}					t_command;
 
 /*
 ** staff functions (functions that I use everywhere).
@@ -83,11 +88,9 @@ void				md5_sha_output(t_command *command);
 void				*md5_sha_init_data(void);
 
 static t_command	g_commands[COUNT_COMMANDS] = {
-	{"md5", md5_hash, md5_sha_parser, md5_sha_output, md5_sha_init_data},
-	{"sha256", sha256_hash, md5_sha_parser, md5_sha_output, md5_sha_init_data}
+	{"md5", md5_hash, md5_sha_parser, md5_sha_output, md5_sha_init_data, NULL, MD_CMD},
+	{"sha256", sha256_hash, md5_sha_parser, md5_sha_output, md5_sha_init_data, NULL, MD_CMD}
 };
-
-//	CHANGE IT
 
 static unsigned int	g_table_md5_sha_t[64] = {
 	3614090360, 3905402710, 606105819, 3250441966, 4118548399, 1200080426, 2821735955, 4249261313,
