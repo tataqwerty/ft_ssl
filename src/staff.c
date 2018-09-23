@@ -1,16 +1,29 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   staff.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/09/23 18:14:52 by tkiselev          #+#    #+#             */
+/*   Updated: 2018/09/23 18:14:53 by tkiselev         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <ft_ssl.h>
 
-void	ft_error(char *s)
+void		ft_error(char *s)
 {
 	ft_printf("%s\n", s);
 	exit(0);
 }
 
-static void	str_join_free(char **dest, char *src, size_t dest_len, int src_len)
+static void	str_join_free(char **dest, char *src,
+			size_t dest_len, size_t src_len)
 {
 	char	*new;
-	int		i;
-	int		j;
+	size_t	i;
+	size_t	j;
 
 	if (!(new = ft_strnew(dest_len + src_len)))
 		ft_error("Error with malloc");
@@ -31,7 +44,7 @@ static void	str_join_free(char **dest, char *src, size_t dest_len, int src_len)
 	*dest = new;
 }
 
-char	*read_data(int fd, size_t *size)
+char		*read_data(int fd, size_t *size)
 {
 	char	buf[BUFF_SIZE];
 	char	*data;
@@ -48,7 +61,7 @@ char	*read_data(int fd, size_t *size)
 	return (data);
 }
 
-size_t	reverse_bytes(size_t n, unsigned char bytes)
+size_t		reverse_bytes(size_t n, unsigned char bytes)
 {
 	size_t			res;
 	unsigned char	*res_ptr;

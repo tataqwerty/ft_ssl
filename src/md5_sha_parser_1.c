@@ -1,13 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   md5_sha_parser_1.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/09/23 16:45:40 by tkiselev          #+#    #+#             */
+/*   Updated: 2018/09/23 16:45:41 by tkiselev         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <ft_ssl.h>
 
 /*
-** returns:
-** 1 - if input have been received,
-** 0 - if just flags have been parsed,
-** IS_NOT_A_FLAG (-1) - if argument is not a flag.
+** @return 0 - argument have been parsed, but input have not been received.
+** @return 1 - input have been received.
+** @return -1 (IS_NOT_A_FLAG) - argument is not a flag.
 */
 
-char	parse_flags_in_arg(char *av[], int *i, int *j, t_command *command)
+static char	parse_flags_in_arg(char *av[], int *i, int *j, t_command *command)
 {
 	if (ft_strequ(av[*i], "--"))
 	{
@@ -16,58 +27,52 @@ char	parse_flags_in_arg(char *av[], int *i, int *j, t_command *command)
 	}
 	else if (av[*i][0] != '-' || ft_strlen(av[*i]) == 1)
 		return (IS_NOT_A_FLAG);
-
 	if (av[*i][*j] == '-' && *j == 0)
 		(*j)++;
-
 	while (av[*i][*j])
 	{
 		md5_sha_flag_router(av, i, j, command);
 		if (((t_md5_sha_data *)command->data)->input)
 			return (1);
 	}
-	return (0);	//	argument have been parsed, but input have not been received.
+	return (0);
 }
 
 /*
-** returns 1 if input was received, 0 if not.
+** @return 1 - input was received.
+** @return 0 - input was not received.
 **
-** @param result - represents result of parsing of single argument.
+** @param result - represents result of parsing of a single argument.
 */
 
-char	parse_flags(char *av[], int *i, int *j, t_command *command)
+static char	parse_flags(char *av[], int *i, int *j, t_command *command)
 {
 	char	result;
 
 	while (av[*i])
 	{
 		result = parse_flags_in_arg(av, i, j, command);
-
 		if (result == IS_NOT_A_FLAG)
-		{
-			break ;	// end of flags parsing.
-		}
-
-		if (result)	// input have been received.
-		{
+			break ;
+		if (result)
 			return (1);
-		}
 		(*i)++;
-		*j = 0;	//	we will parse new argument.
+		*j = 0;
 	}
 	return (0);
 }
 
-void	parse_file(char *file_name, t_command *command)
+static void	parse_file(char *file_name, t_command *command)
 {
-	t_md5_sha_data *data;
-	int fd;
+	t_md5_sha_data	*data;
+	int				fd;
 
 	data = (t_md5_sha_data *)command->data;
-	fd = open(file_name, O_RDONLY);	//	/dev works, I don't know why
+	fd = open(file_name, O_RDONLY);
 	if (fd < 0)
 	{
-		ft_printf("%s: %s: No such file or directory\n", command->name, file_name);
+		ft_printf("%s: %s: No such file or directory\n",
+		command->name, file_name);
 		exit(0);
 	}
 	else if (read(fd, NULL, 0) < 0)
@@ -85,7 +90,7 @@ void	parse_file(char *file_name, t_command *command)
 	}
 }
 
-char	parse_files(char *av[], int *i, int *j, t_command *command)
+static char	parse_files(char *av[], int *i, t_command *command)
 {
 	if (av[*i])
 	{
@@ -97,10 +102,11 @@ char	parse_files(char *av[], int *i, int *j, t_command *command)
 }
 
 /*
-** If input have been received returns 1, else 0.
+** @return 1 - input was received.
+** @return 0 - input was not received.
 */
 
-char	md5_sha_parser(char *av[], int *i, int *j, t_command *command)
+char		md5_sha_parser(char *av[], int *i, int *j, t_command *command)
 {
 	static char	flags_parsed;
 	static char	flag_output;
@@ -114,7 +120,7 @@ char	md5_sha_parser(char *av[], int *i, int *j, t_command *command)
 		}
 		flags_parsed = 1;
 	}
-	if (parse_files(av, i, j, command))
+	if (parse_files(av, i, command))
 	{
 		flag_output = 1;
 		return (1);

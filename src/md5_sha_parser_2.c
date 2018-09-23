@@ -1,8 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   md5_sha_parser_2.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/09/23 16:45:45 by tkiselev          #+#    #+#             */
+/*   Updated: 2018/09/23 16:45:47 by tkiselev         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <ft_ssl.h>
 
-// I don't know where it should be.
-
-void	*md5_sha_init_data(void)
+void		*md5_sha_init_data(void)
 {
 	t_md5_sha_data	*data;
 
@@ -12,13 +22,13 @@ void	*md5_sha_init_data(void)
 	return (data);
 }
 
-void	md5_sha_usage(char *name)
+static void	md5_sha_usage(char *name)
 {
 	ft_printf("usage: %s [-pqrtx] [-s string] [files ...]\n", name);
 	exit(0);
 }
 
-void	p_handler(char *av[], int *i, int *j, t_md5_sha_data *data)
+static void	p_handler(int *j, t_md5_sha_data *data)
 {
 	static char p_used;
 
@@ -30,43 +40,40 @@ void	p_handler(char *av[], int *i, int *j, t_md5_sha_data *data)
 		ft_printf("%s", data->input);
 	}
 	else
-	{
 		data->input = ft_strdup("");
-	}
 	(*j)++;
 }
 
-void	s_handler(char *av[], int *i, int *j, t_command *command)
+static void	s_handler(char *av[], int *i, int *j, t_command *command)
 {
 	t_md5_sha_data	*data;
 
 	data = (t_md5_sha_data *)command->data;
 	data->flags.s = 1;
 	(*j)++;
-	if (av[*i][*j])	// -sasdad
+	if (av[*i][*j])
 	{
 		data->name = &av[*i][*j];
 		data->input = ft_strdup(&av[*i][*j]);
 		data->size = ft_strlen(data->input);
 		(*i)++;
 		*j = 0;
+		return ;
 	}
-	else if (av[*i + 1])	// -s asd
+	else if (av[*i + 1])
 	{
 		data->name = av[*i + 1];
 		data->input = ft_strdup(av[*i + 1]);
 		data->size = ft_strlen(data->input);
 		*i += 2;
 		*j = 0;
+		return ;
 	}
-	else	// -s
-	{
-		ft_printf("%s: option requires an argument -- s\n", command->name);
-		md5_sha_usage(command->name);
-	}
+	ft_printf("%s: option requires an argument -- s\n", command->name);
+	md5_sha_usage(command->name);
 }
 
-void	md5_sha_flag_router(char *av[], int *i, int *j, t_command *command)
+void		md5_sha_flag_router(char *av[], int *i, int *j, t_command *command)
 {
 	t_md5_sha_data *data;
 
@@ -82,7 +89,7 @@ void	md5_sha_flag_router(char *av[], int *i, int *j, t_command *command)
 		(*j)++;
 	}
 	else if (av[*i][*j] == 'p')
-		p_handler(av, i, j, data);
+		p_handler(j, data);
 	else if (av[*i][*j] == 's')
 		s_handler(av, i, j, command);
 	else

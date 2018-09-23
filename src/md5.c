@@ -1,25 +1,38 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   md5.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/09/23 16:45:19 by tkiselev          #+#    #+#             */
+/*   Updated: 2018/09/23 16:45:21 by tkiselev         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <ft_ssl.h>
 
-static void	operation_switcher(unsigned int abcd[], unsigned int *F, unsigned int *g, unsigned int i)
+static void		operation_switcher(unsigned int abcd[], unsigned int *f,
+				unsigned int *g, unsigned int i)
 {
 	if (i <= 15)
 	{
-		*F = (abcd[1] & abcd[2]) | (~abcd[1] & abcd[3]);
+		*f = (abcd[1] & abcd[2]) | (~abcd[1] & abcd[3]);
 		*g = i;
 	}
 	else if (i >= 16 && i <= 31)
 	{
-		*F = (abcd[3] & abcd[1]) | (~abcd[3] & abcd[2]);
+		*f = (abcd[3] & abcd[1]) | (~abcd[3] & abcd[2]);
 		*g = (5 * i + 1) % 16;
 	}
 	else if (i >= 32 && i <= 47)
 	{
-		*F = abcd[1] ^ abcd[2] ^ abcd[3];
+		*f = abcd[1] ^ abcd[2] ^ abcd[3];
 		*g = (3 * i + 5) % 16;
 	}
 	else if (i >= 48 && i <= 63)
 	{
-		*F = abcd[2] ^ (abcd[1] | ~abcd[3]);
+		*f = abcd[2] ^ (abcd[1] | ~abcd[3]);
 		*g = (7 * i) % 16;
 	}
 }
@@ -28,7 +41,7 @@ static void		md5_block_handler(unsigned char *hashed, unsigned int buffers[])
 {
 	unsigned int	abcd[4];
 	unsigned int	w[16];
-	unsigned int	F;
+	unsigned int	f;
 	unsigned int	g;
 	int				i;
 
@@ -40,12 +53,12 @@ static void		md5_block_handler(unsigned char *hashed, unsigned int buffers[])
 	i = -1;
 	while (++i < 64)
 	{
-		operation_switcher(abcd, &F, &g, i);
-		F = F + abcd[0] + g_table_md5_sha_t[i] + w[g];
+		operation_switcher(abcd, &f, &g, i);
+		f = f + abcd[0] + g_table_md5_sha_t[i] + w[g];
 		abcd[0] = abcd[3];
 		abcd[3] = abcd[2];
 		abcd[2] = abcd[1];
-		abcd[1] += LEFT_ROTATE(F, g_table_md5_sha_s[i]);
+		abcd[1] += LEFT_ROTATE(f, g_table_md5_sha_s[i]);
 	}
 	buffers[0] += abcd[0];
 	buffers[1] += abcd[1];
@@ -58,13 +71,13 @@ static void		md5_block_handler(unsigned char *hashed, unsigned int buffers[])
 ** @param block_len - quantity of blocks.
 */
 
-unsigned char		*md5_hash(char *input, size_t size)
+unsigned char	*md5_hash(char *input, size_t size)
 {
 	unsigned char	*hashed;
 	unsigned int	buffers[4];
 	size_t			input_size;
-	size_t			i;			//	counter for 512 blocks
-	size_t			blocks_len;	//	quantity of 512 blocks
+	size_t			i;
+	size_t			blocks_len;
 
 	input_size = size * 8;
 	hashed = md5_sha_get_padded_input(input, &size);
@@ -81,4 +94,3 @@ unsigned char		*md5_hash(char *input, size_t size)
 	md5_sha_create_hash(&hashed, buffers, 32, 4);
 	return (hashed);
 }
-

@@ -6,7 +6,7 @@
 #    By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/22 20:42:59 by tkiselev          #+#    #+#              #
-#    Updated: 2018/09/17 10:58:31 by tkiselev         ###   ########.fr        #
+#    Updated: 2018/09/23 16:41:22 by tkiselev         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ $(NAME): $(OBJ)
 	$(CC) -c $< -o $@ -I.
 
 clean:
-	rm -f $(OBJ)
+	@rm -f $(OBJ)
 
 fclean: clean
 	rm -f $(NAME)

@@ -1,20 +1,32 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   md5_sha_algo_staff.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/09/23 16:45:29 by tkiselev          #+#    #+#             */
+/*   Updated: 2018/09/23 16:45:30 by tkiselev         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <ft_ssl.h>
 
-static size_t			get_new_size(size_t size)
+static size_t	get_new_size(size_t size)
 {
-	size++;						//	add 1
-	while ((size % 64) != 56)	//	size % 512 ==> 448
+	size++;
+	while ((size % 64) != 56)
 		size++;
 	size += 8;
 	return (size);
 }
 
 /*
-** Add padding bits (1 + 000...)
-** Add length (last 8 bytes)
+** Adds padding bits (1 + 000...)
+** Adds length (last 8 bytes)
 */
 
-unsigned char		*md5_sha_get_padded_input(char *input, size_t *size)
+unsigned char	*md5_sha_get_padded_input(char *input, size_t *size)
 {
 	unsigned char	*new;
 	size_t			new_size;
@@ -22,12 +34,13 @@ unsigned char		*md5_sha_get_padded_input(char *input, size_t *size)
 	new_size = get_new_size(*size);
 	(!(new = ft_memalloc(new_size))) ? ft_error("Error with malloc") : 0;
 	ft_memcpy(new, input, *size);
-	new[*size] |= 128;			// 10000000
+	new[*size] |= 128;
 	*size = new_size;
 	return (new);
 }
 
-void				md5_sha_create_hash(unsigned char **hash, unsigned int buffers[], int hash_size, int buffers_n)
+void			md5_sha_create_hash(unsigned char **hash,
+				unsigned int buffers[], int hash_size, int buffers_n)
 {
 	unsigned char	*base;
 	unsigned char	*tmp;
@@ -53,20 +66,20 @@ void				md5_sha_create_hash(unsigned char **hash, unsigned int buffers[], int ha
 	}
 }
 
-void	copy_16_words(unsigned int M[], unsigned char *hashed)
+void			copy_16_words(unsigned int w[], unsigned char *hashed)
 {
 	unsigned char	i;
 
 	i = 0;
 	while (i < 16)
 	{
-		ft_memcpy((unsigned char *)&M[i], hashed, 4);
+		ft_memcpy((unsigned char *)&w[i], hashed, 4);
 		i++;
 		hashed += 4;
 	}
 }
 
-void	init_buffers(unsigned int buffers[], unsigned int array[])
+void			init_buffers(unsigned int buffers[], unsigned int array[])
 {
 	buffers[0] = array[0];
 	buffers[1] = array[1];

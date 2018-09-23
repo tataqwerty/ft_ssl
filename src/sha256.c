@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sha256.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/09/23 18:14:45 by tkiselev          #+#    #+#             */
+/*   Updated: 2018/09/23 18:14:46 by tkiselev         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <ft_ssl.h>
 
 static void		extend_words(unsigned int w[])
@@ -9,29 +21,36 @@ static void		extend_words(unsigned int w[])
 	i = 16;
 	while (i < 64)
 	{
-		tmp1 = RIGHT_ROTATE(w[i-15], 7) ^ RIGHT_ROTATE(w[i-15], 18) ^ RIGHT_SHIFT(w[i-15], 3);
-		tmp2 = RIGHT_ROTATE(w[i-2], 17) ^ RIGHT_ROTATE(w[i-2], 19) ^ RIGHT_SHIFT(w[i-2], 10);
-		w[i] = w[i-16] + tmp1 + w[i-7] + tmp2;
+		tmp1 = RIGHT_ROTATE(w[i - 15], 7) ^ RIGHT_ROTATE(w[i - 15], 18) ^
+			RIGHT_SHIFT(w[i - 15], 3);
+		tmp2 = RIGHT_ROTATE(w[i - 2], 17) ^ RIGHT_ROTATE(w[i - 2], 19) ^
+			RIGHT_SHIFT(w[i - 2], 10);
+		w[i] = w[i - 16] + tmp1 + w[i - 7] + tmp2;
 		i++;
 	}
 }
 
-static void	operation_switcher(unsigned int abcdefgh[], unsigned int w[], int i, unsigned int tmp[])
+static void		operation_switcher(unsigned int abcdefgh[], unsigned int w[],
+				int i, unsigned int tmp[])
 {
 	unsigned int s0;
 	unsigned int s1;
 	unsigned int maj;
 	unsigned int ch;
 
-	s1 = RIGHT_ROTATE(abcdefgh[4], 6) ^ RIGHT_ROTATE(abcdefgh[4], 11) ^ RIGHT_ROTATE(abcdefgh[4], 25);
+	s1 = RIGHT_ROTATE(abcdefgh[4], 6) ^ RIGHT_ROTATE(abcdefgh[4], 11) ^
+		RIGHT_ROTATE(abcdefgh[4], 25);
 	ch = (abcdefgh[4] & abcdefgh[5]) ^ (~abcdefgh[4] & abcdefgh[6]);
 	tmp[0] = abcdefgh[7] + s1 + ch + g_table_sha256_k[i] + w[i];
-	s0 = RIGHT_ROTATE(abcdefgh[0], 2) ^ RIGHT_ROTATE(abcdefgh[0], 13) ^ RIGHT_ROTATE(abcdefgh[0], 22);
-	maj = (abcdefgh[0] & abcdefgh[1]) ^ (abcdefgh[0] & abcdefgh[2]) ^ (abcdefgh[1] & abcdefgh[2]);
+	s0 = RIGHT_ROTATE(abcdefgh[0], 2) ^ RIGHT_ROTATE(abcdefgh[0], 13) ^
+		RIGHT_ROTATE(abcdefgh[0], 22);
+	maj = (abcdefgh[0] & abcdefgh[1]) ^ (abcdefgh[0] & abcdefgh[2]) ^
+		(abcdefgh[1] & abcdefgh[2]);
 	tmp[1] = s0 + maj;
 }
 
-static void		array_map(unsigned int arr[], int arr_n, unsigned char bytes, size_t (*f)(size_t, unsigned char))
+static void		array_map(unsigned int arr[], int arr_n, unsigned char bytes,
+				size_t (*f)(size_t, unsigned char))
 {
 	int i;
 
@@ -43,7 +62,8 @@ static void		array_map(unsigned int arr[], int arr_n, unsigned char bytes, size_
 	}
 }
 
-static void		sha256_block_handler(unsigned char *hashed, unsigned int buffers[])
+static void		sha256_block_handler(unsigned char *hashed,
+				unsigned int buffers[])
 {
 	unsigned int	w[64];
 	unsigned int	abcdefgh[8];
@@ -51,7 +71,7 @@ static void		sha256_block_handler(unsigned char *hashed, unsigned int buffers[])
 	int				i;
 
 	copy_16_words(w, hashed);
-	array_map(w, 16, 4, reverse_bytes);	//	16 elements each of size of 4 bytes.
+	array_map(w, 16, 4, reverse_bytes);
 	extend_words(w);
 	init_buffers(abcdefgh, buffers);
 	i = -1;
@@ -91,7 +111,7 @@ unsigned char	*sha256_hash(char *input, size_t size)
 	while (i < blocks_len)
 		sha256_block_handler(hashed + (i++ * 64), buffers);
 	ft_memdel((void **)&hashed);
-	array_map(buffers, 8, 4, reverse_bytes);	//	8 elements in array, each of size of 4 bytes.
+	array_map(buffers, 8, 4, reverse_bytes);
 	md5_sha_create_hash(&hashed, buffers, 64, 8);
 	return (hashed);
 }
