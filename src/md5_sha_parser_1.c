@@ -64,7 +64,7 @@ void	parse_file(char *file_name, t_command *command)
 	int fd;
 
 	data = (t_md5_sha_data *)command->data;
-	fd = open(file_name, O_RDONLY);
+	fd = open(file_name, O_RDONLY);	//	/dev works, I don't know why
 	if (fd < 0)
 	{
 		ft_printf("%s: %s: No such file or directory\n", command->name, file_name);
@@ -99,8 +99,6 @@ char	parse_files(char *av[], int *i, int *j, t_command *command)
 /*
 ** If input have been received returns 1, else 0.
 */
-
-#include <time.h>
 
 char	md5_sha_parser(char *av[], int *i, int *j, t_command *command)
 {

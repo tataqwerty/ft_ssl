@@ -92,6 +92,5 @@ int				main(int ac, char *av[])
 		(!command) ? show_commands(av[1]) : 0;
 		ft_ssl_template(command, ac, av);
 	}
-	system("leaks ft_ssl");
 	return (0);
 }
